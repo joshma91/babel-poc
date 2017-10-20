@@ -17,8 +17,8 @@ contract TranslationContract {
     struct TransObj {
         address originAddress;      //requestor address
         string originStr;           //string to be translated
-        Languages originLanguage;   
-        Languages destLanguage;
+        uint originLanguage;   
+        uint destLanguage;
         uint price;                 //amount to be awarded to translator
         uint time;                  //timestamp of initial request
         bool completed;             //flag that the requestor can change or triggered after translation
@@ -44,12 +44,12 @@ contract TranslationContract {
     event TranslationSuccess(address addr, string str, uint value);
     event TranslationFailed(address addr, string str, uint value);
 
-    function requestTranslation(string str, Languages lang1, Languages lang2) payable {
+    function requestTranslation(string str, uint lang1, uint lang2) payable {
         
         //get the array of translation objects for the requestor's address
         TransObj memory tmp;
 
-        if(msg.value > 0){
+        if (msg.value > 0){
             tmp.originAddress = msg.sender;
             tmp.originStr = str;
             tmp.originLanguage = lang1;
@@ -62,7 +62,7 @@ contract TranslationContract {
             TranslationRequested(msg.sender, str, msg.value);
             
             //update LUT if it's the first transaction for the address
-            if(transMap[msg.sender].length < 2) addressLUT.push(msg.sender);
+            if (transMap[msg.sender].length < 2) addressLUT.push(msg.sender);
         }
     }
 
@@ -74,7 +74,7 @@ contract TranslationContract {
 
         //check for the same string, completed == false, and value > 0
         for (uint i=0; i<requestor.length; i++){
-            if(StringUtils.equal(requestor[i].originStr, str) && requestor[i].completed == false && requestor[i].price > 0 ){
+            if (StringUtils.equal(requestor[i].originStr, str) && requestor[i].completed == false && requestor[i].price > 0 ){
                 //update object with translation
                 requestor[i].translatedStr = str;
                 requestor[i].transAddress = msg.sender;
@@ -97,7 +97,7 @@ contract TranslationContract {
 
         //check for the same string, completed == false
         for (uint i=0; i<requestor.length; i++){
-            if(StringUtils.equal(requestor[i].originStr, str) && requestor[i].completed == false ){
+            if (StringUtils.equal(requestor[i].originStr, str) && requestor[i].completed == false ){
                 //if the person sending the txn is the original requestor, grant permission
                 if (msg.sender == requestor[i].originAddress) {
                     return i;
