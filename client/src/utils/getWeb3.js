@@ -1,11 +1,11 @@
+/* globals window */
 import Web3 from "web3";
 
 const getWeb3 = () =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener(`load`, () => {
-      let results;
-      let web3 = window.web3;
+      let { web3 } = window;
 
       // Checking if Web3 has been injected by the browser (Mist/MetaMask)
       if (typeof web3 !== `undefined`) {
