@@ -1,55 +1,42 @@
 import React, { Component } from "react";
-import initContract from "truffle-contract";
-import TranslationContract from "./contracts/TranslationContract.json";
+import logo from "./logo.svg";
+import "./App.css";
+
 import getWeb3 from "./utils/getWeb3";
-import RequestTranslation from "./components/RequestTranslation";
+import {
+  getAccounts,
+  getTranslationInstance,
+} from "./utils/translationContract";
 
 class App extends Component {
-  state = { web3: null, translationInstance: null, accounts: null };
+  state = { web3: null, contractInstance: null, accounts: null };
 
   componentWillMount = async () => {
     try {
-      const result = await getWeb3();
-      this.setState({ web3: result.web3 });
-      this.instantiateContract();
+      const web3 = await getWeb3();
+      const contractInstance = await getTranslationInstance(web3);
+      const accounts = await getAccounts(web3);
+
+      this.setState({ web3, contractInstance, accounts });
     } catch (error) {
       alert(`Error finding web3.`, error);
+      console.log(error)
     }
   };
 
-  instantiateContract() {
-    // Initial contract object.
-    const translation = initContract(TranslationContract);
-    translation.setProvider(this.state.web3.currentProvider);
-
-    // Get accounts and contract instance.
-    this.state.web3.eth.getAccounts(async (error, accounts) => {
-      const instance = await translation.deployed();
-      this.setState({ translationInstance: instance, accounts });
-      console.log(`translationInstance ready`);
-    });
-  }
-
   render() {
-    const { web3, translationInstance, accounts } = this.state;
-    const ready = web3 && translationInstance && accounts;
-    if (!ready) {
-      return <div>Loading...</div>;
-    }
+    const { web3, contractInstance, accounts } = this.state;
     return (
-      <div>
-        <h1>Babel PoC</h1>
-        <p>
-          A proof-of-concept for a p2p translation network running on top of the Ethereum blockchain.
-        </p>
-        <h2>Accounts</h2>
-        {
-          accounts.map(x => <div>{x}</div>)
-        }
-        <RequestTranslation
-          translationInstance={translationInstance}
-          accounts={accounts}
-        />
+      <div className="App">
+        <header className="App-header">
+          <h1 className="App-title">Babel-PoC</h1>
+        </header>
+        <div>
+          <h2>Ready State</h2>
+          <div>web3: {Boolean(web3).toString()}</div>
+          <div>contractInstance: {Boolean(contractInstance).toString()}</div>
+          <div>accounts: {Boolean(accounts).toString()}</div>
+        </div>
       </div>
     );
   }
