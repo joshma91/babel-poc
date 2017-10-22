@@ -21,15 +21,13 @@ export default class extends React.Component {
     console.log(this.state);
 
     try {
-      const id = await contractInstance.newTranslation(
+      const id = await contractInstance.newTranslation.call(
         translationStr,
         LANG[from].number,
         LANG[to].number,
         { from: account, value: bounty, gas: 300000 }
       );
-      // id does not currently work, waiting on solidity contract to be fixed
-      console.log(id)
-      alert("Submission successful! Your translation id is: " + id);
+      alert("Submission successful! Your translation id is: " + id.toNumber());
     } catch (error) {
       alert("An error has occured", error);
       console.log(error);
