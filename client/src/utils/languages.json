@@ -1,0 +1,22 @@
+{
+  "EN": {
+    "label": "English",
+    "code": "EN",
+    "number": 1
+  },
+  "ES": {
+    "label": "Spanish",
+    "code": "ES",
+    "number": 2
+  },
+  "ZH": {
+    "label": "Chinese",
+    "code": "ZH",
+    "number": 3
+  },
+  "FR": {
+    "label": "French",
+    "code": "FR",
+    "number": 4
+  }
+}
