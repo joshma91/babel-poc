@@ -9,7 +9,6 @@ contract TranslationContract {
     uint createdAt;
     address owner;
     Translation[] public translations;
-    uint public numTranslations;
 
     //mapping to provide LUT of all translationIDs from particular address;    
     mapping (address => uint[]) public requestsByAddress; 
@@ -35,7 +34,6 @@ contract TranslationContract {
     function TranslationContract() {
         createdAt = now;
         owner = msg.sender;
-        numTranslations = 0;
     }
 
     event TranslationRequested(uint translationID, address addr, string str, uint value);
@@ -49,7 +47,6 @@ contract TranslationContract {
         if (msg.value > 0){
 
             translationID = translations.length;
-            // Translation storage t = translations[translationID];
             Translation memory t; 
             
             t.originAddress = msg.sender;
@@ -61,11 +58,10 @@ contract TranslationContract {
             t.completed = false;
 
             translations.push(t);
-
-            TranslationRequested(translationID, msg.sender, str, msg.value);
             //Add the translation ID to the mapping of address:translationID 
             requestsByAddress[msg.sender].push(translationID);
-            numTranslations++;
+
+            TranslationRequested(translationID, msg.sender, str, msg.value);
         }
     }
 
@@ -105,8 +101,8 @@ contract TranslationContract {
         bytes32[10] memory outputArray;
         for (uint i=0; i<translations.length; i++) {
             if (translations[i].completed == false) {
-                bytes32 tmp = stringToBytes32(translations[i].originStr);
-                outputArray[i] = tmp;
+                bytes32 originStrInBytes = stringToBytes32(translations[i].originStr);
+                outputArray[i] = originStrInBytes;
             }
         }
 
