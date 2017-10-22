@@ -17,7 +17,7 @@ contract TranslationContract {
     enum Languages{English, Spanish, Chinese, French}
 
     //A structure to store everything to do with each translation request 
-    struct Translation{
+    struct Translation {
         
         address originAddress;      //requestor address
         string originStr;           //string to be translated
@@ -46,7 +46,7 @@ contract TranslationContract {
         
         //get the array of translation objects for the requestor's address
 
-        if (msg.value > 0){
+        if (msg.value > 0) {
 
             translationID = translations.length;
             // Translation storage t = translations[translationID];
@@ -101,7 +101,7 @@ contract TranslationContract {
         translations[translationID].completed = true;
     }
 
-    function getAllOpenRequests() constant returns (bytes32[10]){
+    function getAllOpenRequests() constant returns (bytes32[10]) {
         bytes32[10] memory outputArray;
         for (uint i=0; i<translations.length; i++) {
             if (translations[i].completed == false) {
@@ -113,9 +113,11 @@ contract TranslationContract {
         return outputArray;
     }
 
-    function getTranslatedString(uint translationID) constant returns (string){
+    function getTranslatedString(uint translationID) constant returns (string) {
         Translation t = translations[translationID];
-        if(t.completed != true) return "ERROR: No translation found";
+        if (t.completed != true) {
+            return "ERROR: No translation found";
+        }
         return t.translatedStr;
     }
 
