@@ -103,9 +103,11 @@ contract TranslationContract {
 
     function getAllOpenRequests() constant returns (bytes32[10]){
         bytes32[10] memory outputArray;
-        for (uint i=0; i<translations.length; i++){
-            bytes32 tmp = stringToBytes32(translations[i].originStr);
-            outputArray[i] = tmp;
+        for (uint i=0; i<translations.length; i++) {
+            if (translations[i].completed == false) {
+                bytes32 tmp = stringToBytes32(translations[i].originStr);
+                outputArray[i] = tmp;
+            }
         }
 
         return outputArray;
