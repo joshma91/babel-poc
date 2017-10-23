@@ -23,8 +23,8 @@ contract("TranslationContract", accounts => {
       {from: joshs_address, value: 10 }
     );
 
-    const result = await translationInstance.getAllOpenRequests.call();
-    const str = await translationInstance.getRequestString(result[1]);
+    const arrayOfIds = await translationInstance.getAllOpenRequests.call();
+    const str = await translationInstance.getRequestString(arrayOfIds[1]);
     
     // const str = toAscii(result[1]).replace(/\0/g, "");
 
