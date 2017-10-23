@@ -9,19 +9,36 @@ contract("TranslationContract", accounts => {
   it("should return the string to be translated", async () => {
     const translationInstance = await TranslationContract.deployed();
 
-    await translationInstance.newTranslation(
+    // translationInstance.TranslationRequested().watch(function(error,res) {
+    //   if(!error){
+    //     console.log(res.args.translationID);
+    //   } else {
+    //     console.log("Error! + ", error);
+    //   }
+    // });
+    
+    const result1 = await translationInstance.newTranslation(
       "Test Translation",
       Languages.English,
       Languages.French,
       {from: joshs_address, value: 10 }
     );
 
-    await translationInstance.newTranslation(
+    const event1 = result1.logs.find(function(x){return(x.event == "TranslationRequested")})
+
+    console.log(event1.args.translationID.toNumber());
+
+    const result2 = await translationInstance.newTranslation(
       "Hi, how are you?",
       Languages.English,
       Languages.French,
       {from: joshs_address, value: 10 }
     );
+
+    const event2 = result2.logs.find(function(x){return(x.event == "TranslationRequested")});
+
+    console.log(event2.args.translationID.toNumber());
+    
 
     const result = await translationInstance.getAllOpenRequests.call();
     const str = toAscii(result[1]).replace(/\0/g, "");

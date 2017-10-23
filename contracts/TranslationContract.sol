@@ -40,13 +40,13 @@ contract TranslationContract {
     event TranslationSuccess(uint translationID, address addr, string str, uint value);
     event TranslationFailed(address addr, string str, uint value);
 
-    function newTranslation(string str, uint lang1, uint lang2) payable returns (uint translationID) {
+    function newTranslation(string str, uint lang1, uint lang2) payable {
         
         //get the array of translation objects for the requestor's address
 
         if (msg.value > 0){
 
-            translationID = translations.length;
+            uint translationID = translations.length;
             Translation memory t; 
             
             t.originAddress = msg.sender;
@@ -114,6 +114,11 @@ contract TranslationContract {
         if(t.completed != true) return "ERROR: No translation found";
         return t.translatedStr;
     }
+    
+    // function getMyCompletedTranslations() constant returns (bytes32[10]){
+    //     bytes32[10] memory outputArray;
+    //     // for(uint i=0; i<)
+    // }
 
     //this should be in Utils
     function stringToBytes32(string memory source) returns (bytes32 result) {
