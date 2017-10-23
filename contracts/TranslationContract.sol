@@ -19,6 +19,7 @@ contract TranslationContract {
     //A structure to store everything to do with each translation request 
     struct Translation {
         
+        uint translationID;
         address originAddress;      //requestor address
         string originStr;           //string to be translated
         uint originLanguage;   
@@ -52,6 +53,7 @@ contract TranslationContract {
             // Translation storage t = translations[translationID];
             Translation memory t; 
             
+            t.translationID = translationID;
             t.originAddress = msg.sender;
             t.originStr = str;
             t.originLanguage = lang1;
@@ -101,16 +103,29 @@ contract TranslationContract {
         translations[translationID].completed = true;
     }
 
-    function getAllOpenRequests() constant returns (bytes32[10]) {
-        bytes32[10] memory outputArray;
+    function getAllOpenRequests() constant returns (uint[10]) {
+        uint[10] memory outputArray;
         for (uint i=0; i<translations.length; i++) {
             if (translations[i].completed == false) {
-                bytes32 tmp = stringToBytes32(translations[i].originStr);
+                uint tmp = translations[i].translationID;
                 outputArray[i] = tmp;
+                // bytes32 tmp = stringToBytes32(translations[i].originStr);
             }
         }
 
         return outputArray;
+    }
+
+    function getRequestString(uint translationID) constant returns (string) {
+        return translations[translationID].originStr;
+    }
+
+    function getFromLanguage(uint translationID) constant returns (uint) {
+        return translations[translationID].originLanguage;
+    }
+
+    function getToLanguage(uint translationID) constant returns (uint) {
+        return translations[translationID].destLanguage;
     }
 
     function getTranslatedString(uint translationID) constant returns (string) {

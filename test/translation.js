@@ -24,7 +24,9 @@ contract("TranslationContract", accounts => {
     );
 
     const result = await translationInstance.getAllOpenRequests.call();
-    const str = toAscii(result[1]).replace(/\0/g, "");
+    const str = await translationInstance.getRequestString(result[1]);
+    
+    // const str = toAscii(result[1]).replace(/\0/g, "");
 
     console.log("Translation String = ", str);
     assert.equal(str, "Hi, how are you?");
