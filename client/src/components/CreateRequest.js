@@ -18,7 +18,10 @@ export default class extends React.Component {
     const { account, contractInstance } = this.props;
     const { translationStr, from, to, bounty } = this.state;
 
-    console.log(this.state);
+    if (translationStr.trim().length === 0) {
+      alert('Please enter in some text to translate.')
+      return;
+    }
 
     try {
       await contractInstance.newTranslation(
