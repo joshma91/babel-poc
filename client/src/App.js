@@ -11,6 +11,7 @@ import {
 // Import action components
 import CreateRequest from "./components/CreateRequest";
 import ListOpenRequests from "./components/ListOpenRequests";
+import FulfillRequests from "./components/FulfillRequest";
 
 class App extends Component {
   state = { web3: null, contractInstance: null, accounts: null };
@@ -37,9 +38,7 @@ class App extends Component {
           contractInstance={contractInstance}
         />
         <ListOpenRequests web3={web3} contractInstance={contractInstance} />
-        <div>
-          <h2>3. Fulfill a translation request.</h2>
-        </div>
+        <FulfillRequests />
         <div>
           <h2>4. Inspect my own fulfilled translation.</h2>
         </div>
