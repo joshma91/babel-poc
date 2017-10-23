@@ -21,13 +21,13 @@ export default class extends React.Component {
     console.log(this.state);
 
     try {
-      const id = await contractInstance.newTranslation.call(
+      await contractInstance.newTranslation(
         translationStr,
         LANG[from].number,
         LANG[to].number,
         { from: account, value: bounty, gas: 300000 }
       );
-      alert("Submission successful! Your translation id is: " + id.toNumber());
+      alert("Submission successful!");
     } catch (error) {
       alert("An error has occured", error);
       console.log(error);

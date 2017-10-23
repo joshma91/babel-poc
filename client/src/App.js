@@ -41,7 +41,7 @@ class App extends Component {
           <h2>3. Fulfill a translation request.</h2>
         </div>
         <div>
-          <h2>4. Request my own fulfilled translation.</h2>
+          <h2>4. Inspect my own fulfilled translation.</h2>
         </div>
       </div>
     );
