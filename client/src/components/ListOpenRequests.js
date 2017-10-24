@@ -1,12 +1,12 @@
 import React from "react";
 
 export default class extends React.Component {
-  state = {};
+  state = { openRequests: [] };
 
   getOpenRequests = async () => {
     const { contractInstance, web3 } = this.props;
-    const result = await contractInstance.getAllOpenRequests.call();
-    this.setState({ openRequests: result.map(web3.toAscii) });
+    const results = await contractInstance.getAllOpenRequests.call();
+    this.setState({ openRequests: results.map(x => x.toNumber())})
   };
 
   render() {
