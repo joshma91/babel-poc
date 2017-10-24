@@ -22,10 +22,17 @@ contract("TranslationContract", accounts => {
       Languages.French,
       {from: joshs_address, value: 10 }
     );
+    
+    await translationInstance.newTranslation(
+      "Third",
+      Languages.English,
+      Languages.French,
+      {from: joshs_address, value: 10 }
+    );
 
     const arrayOfIds = await translationInstance.getAllOpenRequests.call();
     const str = await translationInstance.getRequestString(arrayOfIds[1]);
-    
+
     // const str = toAscii(result[1]).replace(/\0/g, "");
 
     console.log("Translation String = ", str);
