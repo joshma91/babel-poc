@@ -10,6 +10,7 @@ contract TranslationContract {
     address owner;
     Translation[] public translations;
     uint public numTranslations;
+    string IPFSAddress;
 
     //mapping to provide LUT of all translationIDs from particular address;    
     mapping (address => uint[]) public requestsByAddress; 
@@ -21,14 +22,14 @@ contract TranslationContract {
         
         uint translationID;
         address originAddress;      //requestor address
-        string originStr;           //string to be translated
+        bytes32 originHash;           //string to be translated - hash of string + id
         uint originLanguage;   
         uint destLanguage;
         uint bounty;                //amount to be awarded to translator
         uint time;                  //timestamp of initial request
         bool completed;             //flag that the requestor can change or triggered after translation
         address transAddress;       //address of the translator
-        string translatedStr;       //translated string
+        bytes32 translatedHash;       //translated string - hash of string + id
 
         //future variables: duration, reclaimed flag if expired 
     }
@@ -39,23 +40,23 @@ contract TranslationContract {
         numTranslations = 0;
     }
 
-    event TranslationRequested(uint translationID, address addr, string str, uint value);
-    event TranslationSuccess(uint translationID, address addr, string str, uint value);
-    event TranslationFailed(address addr, string str, uint value);
+    event TranslationRequested(uint translationID, address addr, bytes32 str, uint value);
+    event TranslationSuccess(uint translationID, address addr, bytes32 str, uint value);
+    event TranslationFailed(address addr, bytes32 str, uint value);
 
-    function newTranslation(string str, uint lang1, uint lang2) payable returns (uint translationID) {
+    function newTranslation(bytes32 str, uint lang1, uint lang2) payable returns (uint translationID) {
         
         //get the array of translation objects for the requestor's address
 
         if (msg.value > 0) {
 
             translationID = translations.length;
-            // Translation storage t = translations[translationID];
             Translation memory t; 
+            bytes32 origin = str;
             
             t.translationID = translationID;
             t.originAddress = msg.sender;
-            t.originStr = str;
+            t.originHash = origin;
             t.originLanguage = lang1;
             t.destLanguage = lang2;
             t.bounty = msg.value;  //use the amount in txn
@@ -64,7 +65,7 @@ contract TranslationContract {
 
             translations.push(t);
 
-            TranslationRequested(translationID, msg.sender, str, msg.value);
+            TranslationRequested(translationID, msg.sender, origin, msg.value);
             //Add the translation ID to the mapping of address:translationID 
             requestsByAddress[msg.sender].push(translationID);
             numTranslations++;
@@ -73,17 +74,17 @@ contract TranslationContract {
 
     //function called to complete translation object + send reward to translator
     //'key' argument is the address of the requestor
-    function performTranslation(string translatedText, uint translationID) {
+    function performTranslation(bytes32 str, uint translationID) {
         
         Translation storage t = translations[translationID];
         //update original Translation object with translation
-        t.translatedStr = translatedText;
+        t.translatedHash = str;
         t.transAddress = msg.sender;
 
         //send the reward
         //TODO: how to put into if/assert statement?
         msg.sender.transfer(t.bounty);
-        TranslationSuccess(translationID, msg.sender, t.translatedStr, t.bounty);
+        TranslationSuccess(translationID, msg.sender, t.translatedHash, t.bounty);
         t.completed = true;
         // } else {
         //     TranslationFailed(translationID, msg.sender, t.translatedStr, t.bounty);
@@ -98,8 +99,6 @@ contract TranslationContract {
 
     function cancelTranslation(uint translationID, string str) requestorOnly (translationID) {
        
-        //check to see if the string passed in is the same
-        require(StringUtils.equal(str,translations[translationID].originStr));
         translations[translationID].completed = true;
     }
 
@@ -116,8 +115,8 @@ contract TranslationContract {
         return outputArray;
     }
 
-    function getRequestString(uint translationID) constant returns (string) {
-        return translations[translationID].originStr;
+    function getRequestHash(uint translationID) constant returns (bytes32) {
+        return translations[translationID].originHash;
     }
 
     function getFromLanguage(uint translationID) constant returns (uint) {
@@ -128,12 +127,12 @@ contract TranslationContract {
         return translations[translationID].destLanguage;
     }
 
-    function getTranslatedString(uint translationID) constant returns (string) {
-        Translation t = translations[translationID];
+    function getTranslatedHash(uint translationID) constant returns (bytes32) {
+        Translation memory t = translations[translationID];
         if (t.completed != true) {
             return "ERROR: No translation found";
         }
-        return t.translatedStr;
+        return t.translatedHash;
     }
 
     //this should be in Utils
@@ -141,6 +140,14 @@ contract TranslationContract {
         assembly {
             result := mload(add(source, 32))
         }
+    }
+
+    function storeIPFSAddress(string ipfsadrs){
+        IPFSAddress = ipfsadrs;
+    }
+
+    function getIPFSAddress() constant returns (string){
+        return IPFSAddress;
     }
 
     //Solidity 0.4.17 apparently gives the ability to return custom objects externally - would like to play with this when it ships

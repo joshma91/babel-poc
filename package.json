@@ -1,0 +1,26 @@
+{
+  "name": "babel-poc",
+  "version": "1.0.0",
+  "description": "A dApp allowing for strings to be translated by other users.",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshma91/babel-poc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joshma91/babel-poc/issues"
+  },
+  "homepage": "https://github.com/joshma91/babel-poc#readme",
+  "dependencies": {
+    "bs58": "^4.0.1",
+    "ipfs-api": "^15.0.1"
+  }
+}
