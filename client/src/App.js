@@ -28,7 +28,7 @@ class App extends Component {
         if (err) {
             console.error(err);
         } else {
-          var numPeers = res === null ? 0 : res.length;
+          const numPeers = res === null ? 0 : res.length;
           console.log("IPFS - connected to " + numPeers + " peers");
         }
     });

@@ -10,21 +10,21 @@ const ipfsAPIPort = '5001';
 const ipfsWebPort = '8080';
 const ipfsAddress = "http://" + ipfsHost + ':' + ipfsWebPort + "/ipfs";
 
-var ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})
+const ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})
 
 // /* IPFS initialization */
 ipfs.swarm.peers(function (err, res) {
     if (err) {
         console.error(err);
     } else {
-      var numPeers = res === null ? 0 : res.length;
+      const numPeers = res === null ? 0 : res.length;
       console.log("IPFS - connected to " + numPeers + " peers");
     }
 });
 
 //following 2 functions needed to store/retrieve IPFS hash to/from bytes32
 function ipfsHashToBytes32(ipfs_hash) {
-  var h = bs58.decode(ipfs_hash).toString('hex').replace(/^1220/, '');
+  const h = bs58.decode(ipfs_hash).toString('hex').replace(/^1220/, '');
   if (h.length != 64) {
       console.log('invalid ipfs format', ipfs_hash, h);
       return null;
@@ -33,7 +33,7 @@ function ipfsHashToBytes32(ipfs_hash) {
 }
 
 function bytes32ToIPFSHash(hash_hex) {
-  var buf = new Buffer(hash_hex.replace(/^0x/, '1220'), 'hex')
+  const buf = new Buffer(hash_hex.replace(/^0x/, '1220'), 'hex')
   return bs58.encode(buf)
 }
 
@@ -45,6 +45,8 @@ contract("TranslationContract", accounts => {
     const translationInstance = await TranslationContract.deployed();
     
     const newTranslation = async (obj) => {
+
+      //Adding string to IPFS 
       ipfs.add(new Buffer(obj.string), (err, result) => {
           if (err) {
               console.error("Content submission error:", err);
@@ -92,7 +94,7 @@ contract("TranslationContract", accounts => {
     //convert to form consumable by IPFS
     const bytes32toIPFS = bytes32ToIPFSHash(requestHash);
 
-    //grab the stupid string from IPFS
+    //grab the request string from IPFS
    await ipfs.cat(bytes32toIPFS, {buffer:true}).then(function(res){
       console.log("hello there! " + res);
       assert.equal(res.toString(), "Hi, how are you?");
@@ -111,6 +113,7 @@ contract("TranslationContract", accounts => {
     const translationInstance = await TranslationContract.deployed();
 
     const performTranslation = async (obj) => {
+      //add translation to IPFS and existing Translation object
       ipfs.add(new Buffer(obj.string), (err, result) => {
           if (err) {
               console.error("Content submission error:", err);
@@ -147,6 +150,7 @@ contract("TranslationContract", accounts => {
     
     console.log(transHash);
   
+    //retrieve translated string from IPFS
     await ipfs.cat(bytes32toIPFS, {buffer:true}).then(function(res){
       console.log("This is the translated string: " + res);
       assert.equal(res.toString(), "Bonjour, comment ça va?");  
