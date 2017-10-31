@@ -1,6 +1,8 @@
 import initContract from "truffle-contract";
 import TranslationContract from "../contracts/TranslationContract.json";
 
+
+
 // Promisify web3.eth.getAccounts
 const getAccounts = web3 =>
   new Promise((resolve, reject) => {

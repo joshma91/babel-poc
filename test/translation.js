@@ -69,7 +69,7 @@ contract("TranslationContract", accounts => {
     }
 
     const firstRequest =  {
-      string: "Test Translation", 
+      string: "asdfa", 
       from: Languages.English, 
       to: Languages.French, 
       data: {from: joshs_address, value: 10 }};

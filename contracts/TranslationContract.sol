@@ -73,7 +73,6 @@ contract TranslationContract {
     }
 
     //function called to complete translation object + send reward to translator
-    //'key' argument is the address of the requestor
     function performTranslation(bytes32 strHash, uint translationID) {
         
         Translation storage t = translations[translationID];
@@ -82,7 +81,7 @@ contract TranslationContract {
         t.transAddress = msg.sender;
 
         //send the reward
-        //TODO: how to put into if/assert statement for failed event?
+        //TODO: how to put into if/assert statement for failed event
         msg.sender.transfer(t.bounty);
         TranslationSuccess(translationID, msg.sender, t.translatedHash, t.bounty);
         t.completed = true;
@@ -104,7 +103,6 @@ contract TranslationContract {
             if (translations[i].completed == false) {
                 uint tmp = translations[i].translationID;
                 outputArray[i] = tmp;
-                // bytes32 tmp = stringToBytes32(translations[i].originStr);
             }
         }
 
