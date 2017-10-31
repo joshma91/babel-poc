@@ -10,7 +10,6 @@ contract TranslationContract {
     address owner;
     Translation[] public translations;
     uint public numTranslations;
-    string IPFSAddress;
 
     //mapping to provide LUT of all translationIDs from particular address;    
     mapping (address => uint[]) public requestsByAddress; 
@@ -30,6 +29,8 @@ contract TranslationContract {
         bool completed;             //flag that the requestor can change or triggered after translation
         address transAddress;       //address of the translator
         bytes32 translatedHash;       //translated string - hash of string + id
+
+        string tmp;
 
         //future variables: duration, reclaimed flag if expired 
     }
@@ -52,11 +53,10 @@ contract TranslationContract {
 
             translationID = translations.length;
             Translation memory t; 
-            bytes32 origin = str;
             
             t.translationID = translationID;
             t.originAddress = msg.sender;
-            t.originHash = origin;
+            t.originHash = str;
             t.originLanguage = lang1;
             t.destLanguage = lang2;
             t.bounty = msg.value;  //use the amount in txn
@@ -65,7 +65,7 @@ contract TranslationContract {
 
             translations.push(t);
 
-            TranslationRequested(translationID, msg.sender, origin, msg.value);
+            TranslationRequested(translationID, msg.sender, str, msg.value);
             //Add the translation ID to the mapping of address:translationID 
             requestsByAddress[msg.sender].push(translationID);
             numTranslations++;
@@ -74,22 +74,18 @@ contract TranslationContract {
 
     //function called to complete translation object + send reward to translator
     //'key' argument is the address of the requestor
-    function performTranslation(bytes32 str, uint translationID) {
+    function performTranslation(bytes32 strHash, uint translationID) {
         
         Translation storage t = translations[translationID];
         //update original Translation object with translation
-        t.translatedHash = str;
+        t.translatedHash = strHash;
         t.transAddress = msg.sender;
 
         //send the reward
-        //TODO: how to put into if/assert statement?
+        //TODO: how to put into if/assert statement for failed event?
         msg.sender.transfer(t.bounty);
         TranslationSuccess(translationID, msg.sender, t.translatedHash, t.bounty);
         t.completed = true;
-        // } else {
-        //     TranslationFailed(translationID, msg.sender, t.translatedStr, t.bounty);
-        //     revert();
-        // }
     }
 
     modifier requestorOnly (uint translationID) {
@@ -97,7 +93,7 @@ contract TranslationContract {
         _;
     }
 
-    function cancelTranslation(uint translationID, string str) requestorOnly (translationID) {
+    function cancelTranslation(uint translationID) requestorOnly (translationID) {
        
         translations[translationID].completed = true;
     }
@@ -128,10 +124,12 @@ contract TranslationContract {
     }
 
     function getTranslatedHash(uint translationID) constant returns (bytes32) {
+    
         Translation memory t = translations[translationID];
-        if (t.completed != true) {
-            return "ERROR: No translation found";
+        if (t.completed != true || t.translatedHash == "") {
+            return stringToBytes32("");
         }
+
         return t.translatedHash;
     }
 
@@ -141,16 +139,12 @@ contract TranslationContract {
             result := mload(add(source, 32))
         }
     }
-
-    function storeIPFSAddress(string ipfsadrs){
-        IPFSAddress = ipfsadrs;
-    }
-
-    function getIPFSAddress() constant returns (string){
-        return IPFSAddress;
-    }
-
+    
     //Solidity 0.4.17 apparently gives the ability to return custom objects externally - would like to play with this when it ships
     // function getOpenTranslations() returns (Translation[]){
     // }
+
+    function getTmp(uint translationID) constant returns (string) {
+        return translations[translationID].tmp;
+    }
 }
