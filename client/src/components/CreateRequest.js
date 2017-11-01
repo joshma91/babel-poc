@@ -27,10 +27,11 @@ export default class extends React.Component {
       return;
     }
 
-    const performTranslation = async (obj) => {
-      const result = await ipfs.add(new Buffer(obj.string));
-        
-      if (result && result[0] && result[0].hash) {
+    const newTranslation = async (obj) => {
+      try {
+        const result = await ipfs.add(new Buffer(obj.string));
+          
+        if (result && result[0] && result[0].hash) {
           console.log("Successful translation. IPFS address:", result[0].hash);
 
           //make contract calls to store the IPFS hash in Bytes32
@@ -39,12 +40,16 @@ export default class extends React.Component {
           obj.from,
           obj.to,
           obj.data
-        );
-      };
+          );
+        }
+      } catch (error) {
+        alert('Error submitting translation', error);
+        console.log(error);
+      }
     }
     
     try {
-      await performTranslation({
+      await newTranslation({
         string: translationStr,
         from: LANG[from].number,
         to: LANG[to].number,
