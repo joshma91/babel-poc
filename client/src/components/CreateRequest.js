@@ -28,29 +28,19 @@ export default class extends React.Component {
     }
 
     const performTranslation = async (obj) => {
-      console.log(obj);
-      console.log(ipfs);
-      ipfs.add(new Buffer(obj.string), (err, result) => {
-          if (err) {
-              console.error("Content submission error:", err);
-              return false;
-          } else if (result && result[0] && result[0].hash) {
-              console.log("Successful translation. IPFS address:", result[0].hash);
+      const result = await ipfs.add(new Buffer(obj.string));
+        
+      if (result && result[0] && result[0].hash) {
+          console.log("Successful translation. IPFS address:", result[0].hash);
 
-              //make contract calls to store the IPFS hash in Bytes32
-              contractInstance.newTranslation(
-                ipfsHashToBytes32(result[0].hash),
-                obj.from,
-                obj.to,
-                obj.data
-              );
-
-          } else {
-              console.log(result);
-              console.error("Unresolved content submission error");
-              return null;
-          }
-      });
+          //make contract calls to store the IPFS hash in Bytes32
+          contractInstance.newTranslation(
+          ipfsHashToBytes32(result[0].hash),
+          obj.from,
+          obj.to,
+          obj.data
+        );
+      };
     }
     
     try {
