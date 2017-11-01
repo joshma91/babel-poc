@@ -1,5 +1,9 @@
 import React from "react";
 import LANG from "../utils/languages.json";
+import {
+  ipfsHashToBytes32, 
+  bytes32ToIPFSHash,
+} from "../utils/hashUtils.js";
 
 export default class extends React.Component {
   state = {
@@ -15,7 +19,7 @@ export default class extends React.Component {
   handleBountyChange = e => this.setState({ bounty: e.target.value });
 
   handleSubmit = async () => {
-    const { account, contractInstance } = this.props;
+    const { account, contractInstance, ipfs } = this.props;
     const { translationStr, from, to, bounty } = this.state;
 
     if (translationStr.trim().length === 0) {
@@ -23,13 +27,29 @@ export default class extends React.Component {
       return;
     }
 
+    const performTranslation = async (obj) => {
+      const result = await ipfs.add(new Buffer(obj.string));
+        
+      if (result && result[0] && result[0].hash) {
+          console.log("Successful translation. IPFS address:", result[0].hash);
+
+          //make contract calls to store the IPFS hash in Bytes32
+          contractInstance.newTranslation(
+          ipfsHashToBytes32(result[0].hash),
+          obj.from,
+          obj.to,
+          obj.data
+        );
+      };
+    }
+    
     try {
-      await contractInstance.newTranslation(
-        translationStr,
-        LANG[from].number,
-        LANG[to].number,
-        { from: account, value: bounty, gas: 300000 }
-      );
+      await performTranslation({
+        string: translationStr,
+        from: LANG[from].number,
+        to: LANG[to].number,
+        data: { from: account, value: bounty, gas: 300000 }
+      }) 
       alert("Submission successful!");
     } catch (error) {
       alert("An error has occured", error);

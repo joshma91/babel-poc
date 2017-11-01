@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bs58": "^4.0.1",
+    "ipfs-api": "^15.0.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "truffle-contract": "^3.0.0",
