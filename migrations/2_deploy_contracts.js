@@ -5,11 +5,11 @@ var SimpleStorage = artifacts.require("./SimpleStorage.sol");
 
 module.exports = function(deployer) {
  
-  deployer.deploy(SimpleStorage);
-  deployer.deploy(TranslationUtils);
-  deployer.deploy(StringUtils);
+  deployer.deploy(SimpleStorage, { gas: 3000000 });
+  deployer.deploy(TranslationUtils, { gas: 3000000 });
+  deployer.deploy(StringUtils, { gas: 3000000 });
   deployer.link(StringUtils, TranslationContract);
   
-  deployer.deploy(TranslationContract);
+  deployer.deploy(TranslationContract, { gas: 3000000 });
     
 };

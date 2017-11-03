@@ -30,7 +30,7 @@ contract TranslationContract {
         address transAddress;       //address of the translator
         bytes32 translatedHash;       //translated string - hash of string + id
 
-        string tmp;
+        string tmp; //to be deleted, only serves to enable test script
 
         //future variables: duration, reclaimed flag if expired 
     }
@@ -45,7 +45,7 @@ contract TranslationContract {
     event TranslationSuccess(uint translationID, address addr, bytes32 str, uint value);
     event TranslationFailed(address addr, bytes32 str, uint value);
 
-    function newTranslation(bytes32 str, uint lang1, uint lang2) payable returns (uint translationID) {
+    function newTranslation(bytes32 str, uint lang1, uint lang2) public payable returns (uint translationID) {
         
         //get the array of translation objects for the requestor's address
 
@@ -73,7 +73,7 @@ contract TranslationContract {
     }
 
     //function called to complete translation object + send reward to translator
-    function performTranslation(bytes32 strHash, uint translationID) {
+    function performTranslation(bytes32 strHash, uint translationID) public {
         
         Translation storage t = translations[translationID];
         //update original Translation object with translation
@@ -92,7 +92,7 @@ contract TranslationContract {
         _;
     }
 
-    function cancelTranslation(uint translationID) requestorOnly (translationID) {
+    function cancelTranslation(uint translationID) requestorOnly (translationID) public {
        
         translations[translationID].completed = true;
     }
@@ -121,6 +121,15 @@ contract TranslationContract {
         return translations[translationID].destLanguage;
     }
 
+    function getRequestIDsByAddress(address addr) constant returns (uint[]) {
+        return requestsByAddress[addr]; 
+    }
+
+
+    function getTranslationByID(uint translationID) constant returns (bytes32) {
+        return translations[translationID].translatedHash;
+    }
+        
     function getTranslatedHash(uint translationID) constant returns (bytes32) {
     
         Translation memory t = translations[translationID];
@@ -138,10 +147,6 @@ contract TranslationContract {
         }
     }
     
-    //Solidity 0.4.17 apparently gives the ability to return custom objects externally - would like to play with this when it ships
-    // function getOpenTranslations() returns (Translation[]){
-    // }
-
     function getTmp(uint translationID) constant returns (string) {
         return translations[translationID].tmp;
     }

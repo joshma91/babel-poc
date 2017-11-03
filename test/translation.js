@@ -33,7 +33,7 @@ function ipfsHashToBytes32(ipfs_hash) {
 }
 
 function bytes32ToIPFSHash(hash_hex) {
-  const buf = new Buffer(hash_hex.replace(/^0x/, '1220'), 'hex')
+  const buf = new Buffer(hash_hex.toString('hex').replace(/^0x/, '1220'), 'hex')
   return bs58.encode(buf)
 }
 
@@ -75,7 +75,6 @@ contract("TranslationContract", accounts => {
   it("should return the string to be translated", async () => {
     const translationInstance = await TranslationContract.deployed();
   
-
     const firstRequest =  {
       string: "asdfa", 
       from: Languages.English, 
@@ -123,7 +122,6 @@ contract("TranslationContract", accounts => {
     await storeData(translation, translationInstance, false);
     
     //remove this eventually - IPFS for some reason requires some delay in retrieving objects, so this dummy function call is here
-    const tmp = await translationInstance.getTmp(1);
 
     const transHashInBytes32 = await translationInstance.getTranslatedHash(1);
 

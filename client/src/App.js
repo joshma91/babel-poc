@@ -12,7 +12,7 @@ import {
 // Import action components
 import CreateRequest from "./components/CreateRequest";
 import ListOpenRequests from "./components/ListOpenRequests";
-import FulfillRequests from "./components/FulfillRequest";
+import ListMyRequests from "./components/ListMyRequests";
 
 class App extends Component {
   state = { web3: null, contractInstance: null, accounts: null, ipfs: null};  
@@ -49,11 +49,15 @@ class App extends Component {
           contractInstance={contractInstance}
           ipfs = {ipfs}
         />
-        <ListOpenRequests web3={web3} contractInstance={contractInstance}  ipfs = {ipfs}/>
-        <FulfillRequests />
-        <div>
-          <h2>4. Inspect my own fulfilled translation.</h2>
-        </div>
+        <ListOpenRequests 
+          account={accounts[0]}          
+          contractInstance={contractInstance}  
+          ipfs = {ipfs}/>
+        <ListMyRequests 
+          account={accounts[0]}          
+          contractInstance={contractInstance}  
+          ipfs = {ipfs}/>
+
       </div>
     );
   };
