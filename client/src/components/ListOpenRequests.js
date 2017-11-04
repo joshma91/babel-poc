@@ -17,13 +17,11 @@ export default class extends React.Component {
     // console.log(this.state);
   }
 
-  handleSubmit = async (id) => {
+  handleSubmit = async (id, index) => {
     const { account, contractInstance, ipfs } = this.props;
     const { openRequestObjects } = this.state;
 
-    const translationObj = openRequestObjects[id];
-
-    console.log(translationObj.translation);
+    const translationObj = openRequestObjects[index];
     if (!translationObj.translation || translationObj.translation.trim().length === 0) {
       alert('Please enter a translation.')
       return;
@@ -78,7 +76,7 @@ export default class extends React.Component {
       const bytes32toIPFS = bytes32ToIPFSHash(requestHash);
       
       await ipfs.cat(bytes32toIPFS, {buffer:true}).then(function(res){
-        openRequestObjects.push({id: openRequestIds[i], req: res.toString()});
+        openRequestObjects.push({id: openRequestIds[i], index: i, req: res.toString()});
       })
       shouldEnd = true;
     }
@@ -100,7 +98,7 @@ export default class extends React.Component {
                 type="text"
                 onChange={this.handleInputChange.bind(this, x.id)}/> 
             </td>
-            <td> <button onClick={this.handleSubmit.bind(this, x.id)}>Translate!</button> </td>
+            <td> <button onClick={this.handleSubmit.bind(this, x.id, x.index)}>Translate!</button> </td>
           </tr>)}</tbody>
           : null}
       </div>
