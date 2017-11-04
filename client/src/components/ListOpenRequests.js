@@ -7,9 +7,9 @@ import {
 export default class extends React.Component {
   state = { openRequestObjects: [] };
   
-  handleInputChange = (id,e) => {
+  handleInputChange = (id,index, e) => {
     const requests = this.state.openRequestObjects;
-    requests[id].translation = e.target.value;
+    requests[index].translation = e.target.value;
     this.setState({
       openRequestObjects : requests
     });
@@ -96,7 +96,7 @@ export default class extends React.Component {
             <td> 
               <input
                 type="text"
-                onChange={this.handleInputChange.bind(this, x.id)}/> 
+                onChange={this.handleInputChange.bind(this, x.id, x.index)}/> 
             </td>
             <td> <button onClick={this.handleSubmit.bind(this, x.id, x.index)}>Translate!</button> </td>
           </tr>)}</tbody>
