@@ -21,14 +21,14 @@ contract TranslationContract {
         
         uint translationID;
         address originAddress;      //requestor address
-        bytes32 originHash;           //string to be translated - hash of string + id
+        bytes32 originHash;         //string to be translated - hash of string + id
         uint originLanguage;   
         uint destLanguage;
         uint bounty;                //amount to be awarded to translator
         uint time;                  //timestamp of initial request
         bool completed;             //flag that the requestor can change or triggered after translation
         address transAddress;       //address of the translator
-        bytes32 translatedHash;       //translated string - hash of string + id
+        bytes32 translatedHash;     //translated string - hash of string + id
 
         string tmp; //to be deleted, only serves to enable test script
 
@@ -99,11 +99,15 @@ contract TranslationContract {
 
     function getAllOpenRequests() constant returns (uint[10]) {
         uint[10] memory outputArray;
+        uint nullCount = 0;
         for (uint i=0; i<translations.length; i++) {
             if (translations[i].completed == false) {
                 uint tmp = translations[i].translationID;
-                outputArray[i] = tmp;
+                outputArray[i-nullCount] = tmp;
+            } else {
+                nullCount++;
             }
+
         }
 
         return outputArray;
@@ -134,17 +138,10 @@ contract TranslationContract {
     
         Translation memory t = translations[translationID];
         if (t.completed != true || t.translatedHash == "") {
-            return stringToBytes32("");
+            return 0x00000000000000000000000000000000;
         }
 
         return t.translatedHash;
-    }
-
-    //this should be in Utils
-    function stringToBytes32(string memory source) returns (bytes32 result) {
-        assembly {
-            result := mload(add(source, 32))
-        }
     }
     
     function getTmp(uint translationID) constant returns (string) {

@@ -55,7 +55,6 @@ export default class extends React.Component {
         to: LANG[to].number,
         data: { from: account, value: bounty, gas: 300000 }
       }) 
-      alert("Submission successful!");
     } catch (error) {
       alert("An error has occured", error);
       console.log(error);

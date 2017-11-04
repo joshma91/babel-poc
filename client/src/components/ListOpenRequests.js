@@ -13,7 +13,6 @@ export default class extends React.Component {
     this.setState({
       openRequestObjects : requests
     });
-    this.state.openRequestObjects[id].translation = e.target.value; 
     console.log(this.state.openRequestObjects[id]);
     // console.log(this.state);
   }
@@ -70,8 +69,10 @@ export default class extends React.Component {
     console.log(openRequestIds);
 
     let openRequestObjects = [];
-
+    let shouldEnd = false;    //flag to signal when 1st request is listed
     for (let i=0; i<openRequestIds.length; i++){
+      
+      if(shouldEnd && openRequestIds[i] == 0) break;
       const requestHash = await contractInstance.getRequestHash(openRequestIds[i]);
 
       const bytes32toIPFS = bytes32ToIPFSHash(requestHash);
@@ -79,6 +80,7 @@ export default class extends React.Component {
       await ipfs.cat(bytes32toIPFS, {buffer:true}).then(function(res){
         openRequestObjects.push({id: openRequestIds[i], req: res.toString()});
       })
+      shouldEnd = true;
     }
     console.log(openRequestObjects)
     this.setState({ openRequestObjects });

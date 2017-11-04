@@ -92,6 +92,7 @@ contract("TranslationContract", accounts => {
     await storeData(secondRequest, translationInstance, true);
 
     const arrayOfIds = await translationInstance.getAllOpenRequests.call();
+    console.log(arrayOfIds);
     const requestHashInBytes32 = await translationInstance.getRequestHash(arrayOfIds[1]);
 
     console.log("trying to get my string back. Hash is: " + requestHashInBytes32)
