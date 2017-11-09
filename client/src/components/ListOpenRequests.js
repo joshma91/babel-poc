@@ -67,7 +67,7 @@ export default class extends React.Component {
     console.log(openRequestIds);
 
     let openRequestObjects = [];
-    let shouldEnd = false;    //flag to signal when 1st request is listed
+    let shouldEnd = false;    //flag to signal when 1st request is listed again
     for (let i=0; i<openRequestIds.length; i++){
       
       if(shouldEnd && openRequestIds[i] == 0) break;

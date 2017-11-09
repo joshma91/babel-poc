@@ -23,15 +23,29 @@ class App extends Component {
       const contractInstance = await getTranslationInstance(web3);
       const accounts = await getAccounts(web3);
       
-      const ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})
-      ipfs.swarm.peers(function (err, res) {
-        if (err) {
-            console.error(err);
-        } else {
-          const numPeers = res === null ? 0 : res.length;
-          console.log("IPFS - connected to " + numPeers + " peers");
-        }
+      const ipfs = ipfsAPI('ipfs.infura.io', '5001', {'protocol': 'https',
+      API: { // API config for IPFS daemon 
+        HTTPHeaders: {
+          "Access-Control-Allow-Origin": ['*'], // Origins from which to allow http requests 
+          "Access-Control-Allow-Methods": [], // "PUT", "GET", "POST", "DELETE", etc. 
+          "Access-Control-Allow-Credentials": [] // "true" || "false" 
+        } 
+      }
     });
+      ipfs.id((err, identity) => {
+        if (err) throw err;
+        console.log('IPFS address: ' + identity.id);
+      });
+      
+    //   const ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})
+    //   ipfs.swarm.peers(function (err, res) {
+    //     if (err) {
+    //         console.error(err);
+    //     } else {
+    //       const numPeers = res === null ? 0 : res.length;
+    //       console.log("IPFS - connected to " + numPeers + " peers");
+    //     }
+    // });
 
       this.setState({ web3, contractInstance, accounts, ipfs });
     } catch (error) {
